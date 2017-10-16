@@ -9,6 +9,7 @@
 namespace Piwik;
 
 use Piwik\Cache as PiwikCache;
+use Piwik\Columns\Dimension;
 use Piwik\Metrics\Formatter;
 
 require_once PIWIK_INCLUDE_PATH . "/core/Piwik.php";
@@ -296,6 +297,15 @@ class Metrics
         $translations['entry_sum_visit_length'] = Piwik::translate('General_ColumnSumVisitLength') . $afterEntry;
 
         $translations = array_merge(self::getDefaultMetrics(), self::getDefaultProcessedMetrics(), $translations);
+
+        foreach (Dimension::getAllDimensions() as $dimension) {
+            $dimensionId   = str_replace('.', '_', $dimension->getId());
+            $dimensionName = $dimension->getName();
+
+            if (!empty($dimensionId) && !empty($dimensionName)) {
+                $translations[$dimensionId] = $dimensionName;
+            }
+        }
 
         /**
          * Use this event to register translations for metrics processed by your plugin.
